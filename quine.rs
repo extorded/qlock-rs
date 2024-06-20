@@ -1,4 +1,4 @@
-pub fn quine() 
+fn main() 
 {
     let src = "pub fn quine()\n{\n    let src = \"?\";\n    let src_n = src.len();\n    for i in 0..src_n {\n        if src.as_bytes()[i] == 63 {\n            for j in 0..src_n {\n                match src.as_bytes()[j] {\n                    b'\\n' => print!(\"\\\\n\"),\n                    b'\"' => print!(\"\\\"\"),\n                    b'\\' => print!(\"\\\\\\\\\"),\n                    _ => print!(\"{}\", src.as_bytes()[j] as char),\n                }\n            }\n        } else {\n            print!(\"{}\", src.as_bytes()[i] as char);\n        }\n    }\n}\n";
     let src_n = src.len();

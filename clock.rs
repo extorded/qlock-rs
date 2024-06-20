@@ -11,11 +11,11 @@ const DIGITS_PAD: usize = 2;
 const DISPLAY_WIDTH: usize = (FONT_COLS + DIGITS_PAD) * DIGITS_COUNT;
 const DISPLAY_HEIGHT: usize = FONT_ROWS;
 
-pub fn clock() 
+fn main() 
 {
     loop {
         let now = SystemTime::now();
-        let since_epoch = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
+        let since_epoch = now.duration_since(UNIX_EPOCH).expect("went backwards");
         let t = since_epoch.as_secs() as usize;
 
         let mut digits = [0; DIGITS_COUNT];

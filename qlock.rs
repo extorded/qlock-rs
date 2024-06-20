@@ -1,19 +1,43 @@
 use std::thread::sleep;
-use std::time::Duration;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime};
 
-const S: &str = "?";
-const F: [u32; 11] = [31599, 19812, 14479, 31207, 23524, 29411, 29679, 30866, 31727, 31719, 1040,];
+const f: [u32; 11] = [31599, 19812, 14479, 31207, 23524, 29411, 29679, 30866, 31727, 31719, 1040,];
+
+fn gt() -> libc::tm
+{
+    unsafe {
+        let mut tm: libc::tm = std::mem::zeroed();
+        let t = libc::time(std::ptr::null_mut());
+        libc::localtime_r(&t, &mut tm);
+        tm
+    }
+}
+
+fn d(g: usize, tm: &libc::tm) -> usize
+{
+    let h = tm.tm_hour;
+    let m = tm.tm_min;
+    let q = tm.tm_sec;
+    match g {
+        0 => h as usize / 10,
+        1 => h as usize % 10,
+        2 => 10,
+        3 => m as usize / 10,
+        4 => m as usize % 10,
+        5 => 10,
+        6 => q as usize / 10,
+        7 => q as usize % 10,
+        _ => panic!("invalid index"),
+    }
+}
 
 fn p(ch: char, x: &mut usize, y: &mut usize, d: &[usize; 8]) 
 {
-    let i = *x / 2 / (3 + 2);
-    let dx = *x / 2 % (3 + 2);
-    if i < 8
-        && (*y as isize - 4) / 2 < 5
-        && dx < 3
-        && (F[d[i]] >> (((5 - (*y as isize - 4) / 2 - 1) as usize * 3 + dx) as usize)) & 1 != 0
-    {
+    let y4 = *y / 2 - 1;
+    let x2 = *x / 2 - 2;
+    let i = x2 / 5;
+    let j = x2 % 5;
+    if *x > 2 && i < 8 && y4 < 5 && j < 3 && (f[d[i]] >> (12 - y4 * 3 + j)) & 1 != 0 {
         print!("\x1B[1;41;30m{}\x1B[0m", ch);
     } else {
         print!("{}", ch);
@@ -26,54 +50,191 @@ fn p(ch: char, x: &mut usize, y: &mut usize, d: &[usize; 8])
     }
 }
 
-fn gd() -> [usize; 8] 
-{
-    let now = SystemTime::now();
-    let since_epoch = now.duration_since(UNIX_EPOCH).expect("went backwards");
-    let tm = since_epoch.as_secs() % 86400;
-    let d = [
-        tm as usize / 36000,
-        tm as usize % 36000 / 3600,
-        10,
-        tm as usize % 3600 / 600,
-        tm as usize % 600 / 60,
-        10,
-        tm as usize % 60 / 10,
-        tm as usize % 10,
-    ];
-    d
-}
-
-pub fn qlock() 
+fn main() 
 {
     let mut x = 0;
     let mut y = 0;
+
     loop {
-        let d = gd();
-        for so in S.chars() {
+        let tm = gt();
+        for so in "?".chars() {
             if so == '?' {
-                for si in S.chars() {
+                for si in "?".chars() {
                     match si {
                         '\n' => {
-                            p('\\', &mut x, &mut y, &d);
-                            p('n', &mut x, &mut y, &d);
-                            p('"', &mut x, &mut y, &d);
-                            p('\n', &mut x, &mut y, &d);
-                            p('"', &mut x, &mut y, &d);
+                            p(
+                                '\\',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
+                            p(
+                                'n',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
+                            p(
+                                '"',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
+                            p(
+                                '\n',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
+                            p(
+                                '"',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
                         }
                         '"' => {
-                            p('\\', &mut x, &mut y, &d);
-                            p('"', &mut x, &mut y, &d);
+                            p(
+                                '\\',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
+                            p(
+                                '"',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
                         }
                         '\\' => {
-                            p('\\', &mut x, &mut y, &d);
-                            p('\\', &mut x, &mut y, &d);
+                            p(
+                                '\\',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
+                            p(
+                                '\\',
+                                &mut x,
+                                &mut y,
+                                &[
+                                    d(6, &tm),
+                                    d(7, &tm),
+                                    10,
+                                    d(3, &tm),
+                                    d(4, &tm),
+                                    10,
+                                    d(0, &tm),
+                                    d(1, &tm),
+                                ],
+                            );
                         }
-                        _ => p(si, &mut x, &mut y, &d),
+                        _ => p(
+                            si,
+                            &mut x,
+                            &mut y,
+                            &[
+                                d(6, &tm),
+                                d(7, &tm),
+                                10,
+                                d(3, &tm),
+                                d(4, &tm),
+                                10,
+                                d(0, &tm),
+                                d(1, &tm),
+                            ],
+                        ),
                     }
                 }
             } else {
-                p(so, &mut x, &mut y, &d);
+                p(
+                    so,
+                    &mut x,
+                    &mut y,
+                    &[
+                        d(6, &tm),
+                        d(7, &tm),
+                        10,
+                        d(3, &tm),
+                        d(4, &tm),
+                        10,
+                        d(0, &tm),
+                        d(1, &tm),
+                    ],
+                );
             }
         }
         println!("\n\x1B[{}A\x1B[{}D", 5, 0);
