@@ -11,7 +11,7 @@ const DIGITS_PAD: usize = 2;
 const DISPLAY_WIDTH: usize = (FONT_COLS + DIGITS_PAD) * DIGITS_COUNT;
 const DISPLAY_HEIGHT: usize = FONT_ROWS;
 
-fn main() 
+fn main()
 {
     loop {
         let now = SystemTime::now();
