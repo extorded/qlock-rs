@@ -30,11 +30,11 @@ pub fn nob_log(level: &str, message: &str, file: &str) {
     println!("[{}] {}: {}", level, message, file);
 }
 
-const CLEX_ID: i32 = 1;
-const CLEX_INTLIT: i32 = 1;
+const RUSTLEX_ID: i32 = 1;
+const RUSTLEX_INTLIT: i32 = 1;
 
 pub fn is_unconcatable(token: i32) -> bool {
-    token == CLEX_ID || token == CLEX_INTLIT
+    token == RUSTLEX_ID || token == RUSTLEX_INTLIT
 }
 
 pub struct Lexer<'a> {
@@ -73,12 +73,12 @@ impl<'a> Lexer<'a> {
             {
                 self.pos += 1;
             }
-            self.token = CLEX_ID;
+            self.token = RUSTLEX_ID;
         } else if self.input[self.pos].is_ascii_digit() {
             while self.pos < self.input.len() && self.input[self.pos].is_ascii_digit() {
                 self.pos += 1;
             }
-            self.token = CLEX_INTLIT;
+            self.token = RUSTLEX_INTLIT;
         } else {
             self.token = self.input[self.pos] as i32;
             self.pos += 1;
